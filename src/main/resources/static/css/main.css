@@ -1,0 +1,23 @@
+body {
+	background-color: white;
+}
+
+h1 {
+	color: orange;
+	text-align: center;
+	font-family: "Lucida Console";
+}
+
+#textbox {
+	margin: auto;
+	width: 500px;
+	display: block;
+}
+
+div.suggestions {
+    border: 1px solid white;
+    color: white;
+    margin: auto;
+	width: 500px;
+	display: block;
+}
