@@ -1,4 +1,4 @@
-package edu.brown.cs.ta7.bacon;
+package edu.brown.cs.ta7.findPath;
 
 import java.sql.Connection;
 import java.sql.DriverManager;

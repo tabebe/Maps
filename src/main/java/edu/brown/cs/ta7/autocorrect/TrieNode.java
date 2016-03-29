@@ -1,4 +1,4 @@
-package edu.brown.cs.rwdodd.auto;
+package edu.brown.cs.ta7.autocorrect;
 
 import java.util.ArrayList;
 

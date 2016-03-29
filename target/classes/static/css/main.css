@@ -1,10 +1,11 @@
 body {
-	background-color: gray;
+	background-color: white;
 }
 
 h1 {
-	color: white;
+	color: orange;
 	text-align: center;
+	font-family: "Lucida Console";
 }
 
 #textbox {
