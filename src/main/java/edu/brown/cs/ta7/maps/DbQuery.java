@@ -72,8 +72,83 @@ public class DbQuery {
 //    prep.close();
 //    return toReturn;
 //  }
+  
+  public String getID(String lat, String lon) throws SQLException {
+	  String query = "SELECT id FROM node WHERE longitude = ? AND latitude = ?";
+	    PreparedStatement stat = conn.prepareStatement(query);
+	    stat.setString(1, lon);
+	    stat.setString(2, lat);
+	    ResultSet results = stat.executeQuery();
+	    //only add if results isn't empty
+	    String toReturn = "";
+	    if (results.next()) {
+	      toReturn = results.getString(1);
+	    }
+	    stat.close();
+	    results.close();
+	    return toReturn;
+  }
 
 
+  public String getStartN(String id) throws SQLException { 
+	  String query = "SELECT start FROM way WHERE id = ?";
+	    PreparedStatement stat = conn.prepareStatement(query);
+	    stat.setString(1, id);
+	    ResultSet results = stat.executeQuery();
+	    //only add if results isn't empty
+	    String toReturn = "";
+	    if (results.next()) {
+	      toReturn = results.getString(1);
+	    }
+	    stat.close();
+	    results.close();
+	    return toReturn;
+  }
+  
+  public String getEndN(String id) throws SQLException { 
+	  String query = "SELECT end FROM way WHERE id = ?";
+	    PreparedStatement stat = conn.prepareStatement(query);
+	    stat.setString(1, id);
+	    ResultSet results = stat.executeQuery();
+	    //only add if results isn't empty
+	    String toReturn = "";
+	    if (results.next()) {
+	      toReturn = results.getString(1);
+	    }
+	    stat.close();
+	    results.close();
+	    return toReturn;
+  }
+  
+  public String getLongN(String id) throws SQLException { 
+	  String query = "SELECT longitude FROM node WHERE id = ?";
+	    PreparedStatement stat = conn.prepareStatement(query);
+	    stat.setString(1, id);
+	    ResultSet results = stat.executeQuery();
+	    //only add if results isn't empty
+	    String toReturn = "";
+	    if (results.next()) {
+	      toReturn = results.getString(1);
+	    }
+	    stat.close();
+	    results.close();
+	    return toReturn;
+  }
+  
+  public String getLatN(String id) throws SQLException {
+	  String query = "SELECT latitude FROM way WHERE id = ?";
+	    PreparedStatement stat = conn.prepareStatement(query);
+	    stat.setString(1, id);
+	    ResultSet results = stat.executeQuery();
+	    //only add if results isn't empty
+	    String toReturn = "";
+	    if (results.next()) {
+	      toReturn = results.getString(1);
+	    }
+	    stat.close();
+	    results.close();
+	    return toReturn;
+  }
 
 
   /**
@@ -102,7 +177,7 @@ public class DbQuery {
    * @return The nodes's name.
    * @throws SQLException SQL error.
    */
-  public String getWay(String id) throws SQLException {
+  public String getWay(String id) throws SQLException { 
     String query = "SELECT name FROM way WHERE id = ? LIMIT 1";
     PreparedStatement stat = conn.prepareStatement(query);
     stat.setString(1, id);
@@ -116,6 +191,8 @@ public class DbQuery {
     results.close();
     return toReturn;
   }
+  
+  
 
 
 /**
@@ -128,7 +205,7 @@ public class DbQuery {
   public List<String> getNodeWaysIDs(String nodeID) throws
   SQLException {
     String query = "SELECT id FROM "
-        + "way WHERE start = ? OR"
+        + "way WHERE start = ? OR "
         + "end = ?";
     PreparedStatement stat = conn.prepareStatement(query);
     stat.setString(1, nodeID);

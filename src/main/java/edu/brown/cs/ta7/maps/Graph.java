@@ -77,6 +77,15 @@ public class Graph {
 			
 			
 			for (String w : wayIDs) {
+				
+				String start = database.getStartN(w);
+				String end = database.getEndN(w);
+				double x1 = Double.parseDouble(database.getLatN(start));
+				double y1 = Double.parseDouble(database.getLongN(start));
+				double x2 = Double.parseDouble(database.getLatN(end));
+				double y2 = Double.parseDouble(database.getLongN(end));
+				double weight = findDistance(x1, y1, x2, y2);
+				
 				String wayName = database.getWay(w);
 				List<String> nodes = database.getAllNodes();
 				
@@ -86,10 +95,10 @@ public class Graph {
 					
 					if (map.containsKey(newNode)) {
 						Node oldNode = map.get(newNode);
-						if (curr.getDistance() < oldNode.getDistance()) {
-							Way edge = includeEdge(curr, oldNode, wayName, n);
+						if (weight + curr.getDistance() < oldNode.getDistance()) {
+							Way edge = includeEdge(curr, oldNode, wayName, n, weight);
 							curr.addEdge(edge);
-							oldNode.setDistance(curr.getDistance());
+							oldNode.setDistance(weight + curr.getDistance());
 							oldNode.setPrev(curr);
 							oldNode.setWay(wayName);
 							oldNode.setWayID(n);
@@ -97,9 +106,9 @@ public class Graph {
 							pq.add(oldNode);
 						}
 					} else {
-						Way edge = includeEdge(curr, newNode, wayName, n);
+						Way edge = includeEdge(curr, newNode, wayName, n, weight);
 						curr.addEdge(edge);
-						newNode.setDistance(curr.getDistance());
+						newNode.setDistance(weight + curr.getDistance());
 						newNode.setPrev(curr);
 						newNode.setWay(wayName);
 						newNode.setWayID(n);
@@ -131,19 +140,29 @@ public class Graph {
 		
 	}
 	
+	
+	public double findDistance(double x1, double y1, double x2, double y2) {
+		double a = x2 - x1;
+		double b = y2 - y1;
+		double both = (a * a) + (b * b);
+		return Math.sqrt(both);
+	}
 
 
 	
 	
 	public Node includeVertex(String sg) throws SQLException {
-		Node node = new Node(sg);
+		ArrayList list = new ArrayList<Double>();
+		list.add(1.0);
+		list.add(2.0);
+		Node node = new Node(sg, list);
 		return node;
 	}
 	
 	
 	
-	public Way includeEdge(Node start, Node end, String name, String id) {
-		Way way = new Way(start, end, name, id);
+	public Way includeEdge(Node start, Node end, String name, String id, double wght) {
+		Way way = new Way(start, end, name, id, wght);
 		return way;
 	}
 	

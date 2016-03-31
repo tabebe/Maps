@@ -1,4 +1,7 @@
 package edu.brown.cs.ta7.maps;
+import java.util.ArrayList;
+import java.util.Comparator;
+
 import edu.brown.cs.ta7.findPath.Edge;
 import edu.brown.cs.ta7.findPath.Vertex;
 /**
@@ -8,22 +11,88 @@ import edu.brown.cs.ta7.findPath.Vertex;
  */
 
 public class Node extends Vertex<String> {
-  private String myID;
-  private String fromWay;
-  private String fromWayID;
+	// properties for finding the shortest path
+	private String myID;
+	private String fromWay;
+	private String fromWayID;
+	
+	// properties for finding the nearest node
+	private double distFromTarg;
+	private ArrayList<Double> coors;
+	private Node leftChild;
+	private Node rightChild;
 
   /**
    * Node constructor that takes in an ID and stores
    * that value for that particular instance.
    * @param nodeID id
    */
-  public Node(String nodeID) {
+  public Node(String nodeID, ArrayList<Double> c) {
 	super(nodeID);
     this.myID = nodeID;
+    this.coors = c;
     this.fromWay = "";
     this.fromWayID = "";
   }
 
+  /**
+   * Sets the left node of the current node
+   * @param left - left node
+   */
+  public void setLeft(Node left) {
+	  leftChild = left;
+  }
+  
+  /**
+   * gets the left child
+   * @return - node
+   */
+  public Node getleft() {
+	  return leftChild;
+  }
+  
+  /**
+   * Sets the right node of the current node
+   * @param right -- right node
+   */
+  public void setRight(Node right) {
+	  rightChild = right;
+  }
+  
+  /**
+   * gets the right child
+   * @return - node
+   */
+  public Node getRight() {
+	  return rightChild;
+  }
+  
+  /**
+   * Sets the distance from the current node to 
+   * the given target
+   * @param dist - distance
+   */
+  public void setDistFromTarg(double dist) {
+	  distFromTarg = dist;
+  }
+  
+  /**
+   * gets the distance
+   * @return - double
+   */
+  public double getDistFromTarg() {
+	  return distFromTarg;
+  }
+  
+  /**
+   * Gets the coordinates of the current node
+   * @return - array of coordinates
+   */
+  public ArrayList<Double> getCoors() {
+	  return coors;
+  }
+  
+  
   /**
    * getID() returns the ID of the star.
    * @return myID
@@ -79,5 +148,41 @@ public class Node extends Vertex<String> {
     }
     return false;
   }
+  
+  
+  static  Comparator<Node> compareCoor(int axis) {
+	    return new Comparator<Node>() {
+	      @Override
+	      public int compare(Node o1, Node o2) {
+	        double coord1 = o1.getCoors().get(axis);
+	        double coord2 = o2.getCoors().get(axis);
+	        return Double.compare(coord1, coord2);
+	      }
+	    };
+	  }
+  
+  
+  static <T> Comparator<Node> compareFlippedDist() {
+	    return new Comparator<Node>() {
+	      @Override
+	      public int compare(Node o1, Node o2) {
+	        double coord1 = o1.getDistFromTarg();
+	        double coord2 = o2.getDistFromTarg();
+	        return -Double.compare(coord1, coord2);
+	      }
+	    };
+	  }
+  
+  
+  static <T> Comparator<Node> compareDist() {
+	    return new Comparator<Node>() {
+	      @Override
+	      public int compare(Node o1, Node o2) {
+	        double coord1 = o1.getDistFromTarg();
+	        double coord2 = o2.getDistFromTarg();
+	        return Double.compare(coord1, coord2);
+	      }
+	    };
+	  }
 
 }

@@ -1,4 +1,6 @@
 package edu.brown.cs.ta7.maps;
+import java.util.ArrayList;
+
 import edu.brown.cs.ta7.findPath.Edge;
 
 
@@ -21,8 +23,8 @@ private String name;
    * @param name Name of way
    * @param id ID of way
    */
-public Way(Node start, Node end, String name, String id) {
-	super(start, end, 1);
+public Way(Node start, Node end, String name, String id, double wght) {
+	super(start, end, wght);
 	this.name = name;
 	this.id = id;
 }
@@ -43,6 +45,9 @@ public String getName() {
 public String getID() {
 	return id;
 }
+
+
+
 
 
 }
