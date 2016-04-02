@@ -58,6 +58,7 @@ public class Main {
   private static final Charset UTF8 = Charsets.UTF_8;
   private DbQuery database;
   private final static Gson GSON = new Gson();
+  private KDTree<Node> kdTree;
 
   /**
    * @param args the command line args
@@ -130,7 +131,7 @@ public class Main {
 	  // Find nearest neighbor
 	  HashMap<String, ArrayList<Double>> starNames;
 	  ArrayList<KDNode<Node>> knodes = new ArrayList<KDNode<Node>>();
-	  KDTree<Node> kdTree;
+	 
 	  
 	  
 	  /**
@@ -155,9 +156,10 @@ public class Main {
   }
   
   
-  public void scanInputs(KDTree tree, List<Node> nodes, List<Way> ways) throws IOException {
+  public void scanInputs(KDTree tree, List<Node> nodes, List<Way> ways) throws IOException, SQLException {
 	  BufferedReader newBR = new BufferedReader(new InputStreamReader(System.in));
 	  String s;
+	  
 	  while ((s = newBR.readLine()) != null) {
 		  if (s.isEmpty()) {
 			  break;
@@ -172,30 +174,88 @@ public class Main {
   }
   
   
-  public void parseCommands(String[] inputs, KDTree tree, List<Node> nodes, List<Way> ways) {
+  public void parseCommands(String[] inputs, KDTree tree, List<Node> nodes, List<Way> ways) throws SQLException, IOException {
 	  StringBuilder othersb = new StringBuilder();
 	  
 	  if (inputs.length != 4) {
 		  System.out.println("ERROR: wrong number of arguments");
-		  System.exit(1);
+		  scanInputs(kdTree, nodes, ways);
 	  }
+	  
+	  
+	  ArrayList<Double> startCoors = new ArrayList<Double>();
+	  ArrayList<Double> endCoors = new ArrayList<Double>();
+	  
 	  
 	  try {
 		  double x1 = Double.parseDouble(inputs[0]);
 		  double y1 = Double.parseDouble(inputs[1]);
 		  double x2 = Double.parseDouble(inputs[2]);
 		  double y2 = Double.parseDouble(inputs[3]);
-		  
-		  
-		  
-		  ArrayList<Double> startCoors = new ArrayList<Double>();
-		  ArrayList<Double> endCoors = new ArrayList<Double>();
-		  
 		  startCoors.add(x1);
 		  startCoors.add(y1);
 		  endCoors.add(x2);
-		  endCoors.add(y2);
+		  endCoors.add(y2);  
+	  } catch (IllegalArgumentException e) {
+		  String way1 = inputs[0];
+		  String crossWay1 = inputs[1];
+		  String way2 = inputs[2];
+		  String crossWay2 = inputs[3];
 		  
+		  Node firstStart;
+		  Node targetEnd;
+		  
+		  String way1Start = database.getStartN(way1);
+		  String way1End = database.getEndN(way1);
+//		  System.out.println(way1Start);
+//		  System.out.println(way1End);
+		  String crossWay1Start = database.getStartN(crossWay1);
+		  String crossWay1End = database.getEndN(crossWay1);
+//		  System.out.println(crossWay1Start);
+//		  System.out.println(crossWay1End);
+		  String way2Start = database.getStartN(way2);
+		  String way2End = database.getEndN(way2);
+//		  System.out.println(way2Start);
+//		  System.out.println(way2End);
+		  String crossWay2Start = database.getStartN(crossWay2);
+		  String crossWay2End = database.getEndN(crossWay2);
+//		  System.out.println(crossWay2Start);
+//		  System.out.println(crossWay2End);
+		  
+		  boolean pass = false;
+		  boolean extrapass = false;
+		  
+//		  System.out.println(way1Start.equals(crossWay1Start));
+		  
+		  if (way1Start.equals(crossWay1Start) || way1Start.equals(crossWay1End)) {
+			  startCoors = makeNode(way1Start).getCoors();
+			  pass = true;
+		  } else if (way1End.equals(crossWay1Start) || way1End.equals(crossWay1End)) {
+			  startCoors = makeNode(way1End).getCoors();
+			  pass = true;
+		  } 
+		  
+		  if (way2Start.equals(crossWay2Start) || way2Start.equals(crossWay2End)) {
+			  endCoors = makeNode(way2Start).getCoors();
+			  extrapass = true;
+		  } else if (way2End.equals(crossWay2Start) || way2End.equals(crossWay2End)) {
+			  endCoors = makeNode(way2End).getCoors();
+			  extrapass = true;
+		  } 
+		  
+		  if (pass != true || extrapass != true) {
+			  System.out.println("Intersection not found. Try again with "
+			  		+ "streets that intersect");
+			  scanInputs(kdTree, nodes, ways);
+		  }
+		  
+		  
+		  
+		  
+		  
+	  }
+	
+	try {
 		  /**
 		   * Find the nearest nodes for the start and end coordinates
 		   */
@@ -209,7 +269,7 @@ public class Main {
 		  
 		  if (startNode.getID() == endNode.getID()) {
 			  System.out.println("Start and End nodes are the same.");
-			  
+			  scanInputs(kdTree, nodes, ways);
 		  } else {
 		  
 		  Graph graph = new Graph(nodes, ways);
@@ -233,7 +293,7 @@ public class Main {
 		  
 		  
 	  } catch (IllegalArgumentException e) {
-		  
+		  System.out.println("Illegal Arguements");
 		  System.exit(1);
 	  } catch (SQLException e) {
 		  
