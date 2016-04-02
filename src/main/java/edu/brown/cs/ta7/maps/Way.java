@@ -11,6 +11,8 @@ public class Way extends Edge<String> {
 
 private String id; 
 private String name;
+private Node start;
+private Node end;
 
 
 
@@ -25,6 +27,8 @@ private String name;
    */
 public Way(Node start, Node end, String name, String id, double wght) {
 	super(start, end, wght);
+	this.start = start;
+	this.end = end;
 	this.name = name;
 	this.id = id;
 }
@@ -44,6 +48,15 @@ public String getName() {
    */
 public String getID() {
 	return id;
+}
+
+public Node getEnd() {
+	return end;
+}
+
+
+public Node getStart() {
+	return start;
 }
 
 

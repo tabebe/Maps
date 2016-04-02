@@ -73,6 +73,9 @@ public class DbQuery {
 //    return toReturn;
 //  }
   
+  
+  
+  
   public String getID(String lat, String lon) throws SQLException {
 	  String query = "SELECT id FROM node WHERE longitude = ? AND latitude = ?";
 	    PreparedStatement stat = conn.prepareStatement(query);
@@ -136,7 +139,7 @@ public class DbQuery {
   }
   
   public String getLatN(String id) throws SQLException {
-	  String query = "SELECT latitude FROM way WHERE id = ?";
+	  String query = "SELECT latitude FROM node WHERE id = ?";
 	    PreparedStatement stat = conn.prepareStatement(query);
 	    stat.setString(1, id);
 	    ResultSet results = stat.executeQuery();
@@ -159,6 +162,25 @@ public class DbQuery {
    */
   public List<String> getAllNodes() throws SQLException {
     String query = "SELECT id FROM node";
+    PreparedStatement stat = conn.prepareStatement(query);
+    ResultSet results = stat.executeQuery();
+    List<String> toReturn = new ArrayList<String>();
+    while (results.next()) {
+      toReturn.add(results.getString(1));
+    }
+    stat.close();
+    results.close();
+    return toReturn;
+  }
+  
+  /**
+   * query that selects all distinct nodes
+   * from the database.
+   * @return List of all node ids.
+   * @throws SQLException SQL error.
+   */
+  public List<String> getAllWays() throws SQLException {
+    String query = "SELECT id FROM way";
     PreparedStatement stat = conn.prepareStatement(query);
     ResultSet results = stat.executeQuery();
     List<String> toReturn = new ArrayList<String>();

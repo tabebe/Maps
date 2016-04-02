@@ -41,11 +41,9 @@ public class WayTest {
   @Test
   public void edgeGetOtherVertexTest() {
     //test if getOtherVertex() returns the proper other vertex
-	  ArrayList list = new ArrayList<Double>();
-		list.add(1.0);
-		list.add(2.0);
-    Node v1 = new Node("temp1", list);
-    Node v2 = new Node("temp2", list);
+	 
+    Node v1 = new Node("temp1");
+    Node v2 = new Node("temp2");
     Way e1 = new Way(v1, v2, "temp", "temp", 1);
     assertTrue(e1.getOppositeVertex(v1).equals(v2));
     assertTrue(e1.getOppositeVertex(v2).equals(v1));
@@ -54,11 +52,9 @@ public class WayTest {
   @Test
   public void edgeGetNameAndIDTest() {
     //test if getName() and getID() returns the proper other vertex
-	  ArrayList list = new ArrayList<Double>();
-		list.add(1.0);
-		list.add(2.0);
-    Node v1 = new Node("temp1", list);
-    Node v2 = new Node("temp2", list);
+	 
+    Node v1 = new Node("temp1");
+    Node v2 = new Node("temp2");
     Way e1 = new Way(v1, v2, "WayName", "WayID",1);
     assertTrue(e1.getName().equals("WayName"));
     assertTrue(e1.getID().equals("WayID"));

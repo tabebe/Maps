@@ -42,14 +42,12 @@ public class EdgeTest {
   @Test
   public void addAndGetEdgesTest() {
     //tests if edges are added to vertex's list of edges properly
-	  ArrayList list = new ArrayList<Double>();
-		list.add(1.0);
-		list.add(2.0);
+	
 		
-    Node v1 = new Node("nodeID1", list);
-    Node v2 = new Node("nodeID2", list);
-    Node v3 = new Node("nodeID3", list);
-    Node v4 = new Node("nodeID4", list);
+    Node v1 = new Node("nodeID1");
+    Node v2 = new Node("nodeID2");
+    Node v3 = new Node("nodeID3");
+    Node v4 = new Node("nodeID4");
     
     Way e1 = new Way(v1, v2, "wayName1", "wayID1", 1);
     Way e2 = new Way(v1, v3, "wayName2", "wayID2", 1);
@@ -70,14 +68,13 @@ public class EdgeTest {
   
   @Test
   public void setAndGetPreviousTest() {
-	  ArrayList list = new ArrayList<Double>();
-		list.add(1.0);
-		list.add(2.0);
+	  
+	
 		
-    Node v1 = new Node("NodeID1", list);
-    Node v2 = new Node("NodeID2", list);
-    Node v3 = new Node("NodeID3", list);
-    Node v4 = new Node("NodeID4", list);
+    Node v1 = new Node("NodeID1");
+    Node v2 = new Node("NodeID2");
+    Node v3 = new Node("NodeID3");
+    Node v4 = new Node("NodeID4");
     
     v4.setPrev(v3);
     v3.setPrev(v2);
@@ -93,12 +90,10 @@ public class EdgeTest {
   
   @Test
   public void setAndGetDistanceTest() {
-	  ArrayList list = new ArrayList<Double>();
-		list.add(1.0);
-		list.add(2.0);
+	
 		
     //when a vertex is first instantiated, distance is set to inf
-    Node v1 = new Node("NodeID1", list);
+    Node v1 = new Node("NodeID1");
     assertTrue(v1.getDistance() == Double.POSITIVE_INFINITY);
     v1.setDistance(100);
     assertTrue(v1.getDistance() == 100);
@@ -106,34 +101,25 @@ public class EdgeTest {
 
   @Test
   public void getObjectTest() {
-	  ArrayList list = new ArrayList<Double>();
-		list.add(1.0);
-		list.add(2.0);
-		
-    Node v1 = new Node("NodeID1", list);
+	 
+    Node v1 = new Node("NodeID1");
     assertTrue(v1.getObject().equals("NodeID1"));
   }
   
   @Test
   public void equalsTest() {
-	  ArrayList list = new ArrayList<Double>();
-		list.add(1.0);
-		list.add(2.0);
-		
-    Node v1 = new Node("NodeID1", list);
-    Node v2 = new Node("NodeID2", list);
-    Node v3 = new Node("NodeID1", list);
+	
+    Node v1 = new Node("NodeID1");
+    Node v2 = new Node("NodeID2");
+    Node v3 = new Node("NodeID1");
     assertTrue(!v1.equals(v2));
     assertTrue(v1.equals(v3));
   }
   
   @Test
   public void setAndGetFilmTest() {
-	  ArrayList list = new ArrayList<Double>();
-		list.add(1.0);
-		list.add(2.0);
-		
-    Node v1 = new Node("NodeID1", list);
+	
+    Node v1 = new Node("NodeID1");
     v1.setWay("dawg");
     assertTrue(v1.getWay().equals("dawg"));
   }

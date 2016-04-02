@@ -12,8 +12,8 @@ package edu.brown.cs.ta7.findPath;
  */
 
 public class Edge<T> {
-	private final Vertex<T> head; 
-	private final Vertex<T> tail; 
+	private final Vertex<T> start; 
+	private final Vertex<T> end; 
 	private final double weight; 
 
 
@@ -27,10 +27,18 @@ public class Edge<T> {
 		if (v1 == null || v2 == null) {
 			throw new IllegalArgumentException("ERROR: null vertex.");
 		}
-		head = v1;
-		tail = v2;
+		start = v1;
+		end = v2;
 		weight = wght;
 	}
+//	
+//	public Vertex<T> getStart() {
+//		return start;
+//	}
+//	
+//	public Vertex<T> getEnd() {
+//		return end;
+//	}
 
 	/**
 	 * gets the weight of this edge
@@ -47,10 +55,10 @@ public class Edge<T> {
 	 * @return opposite vertex
 	 */
 	public Vertex<T> getOppositeVertex(Vertex<T> vertex) {
-		if (head.equals(vertex)) {
-			return tail;
-		} else if (tail.equals(vertex)) {
-			return head;
+		if (start.equals(vertex)) {
+			return end;
+		} else if (end.equals(vertex)) {
+			return start;
 		}
 
 		throw new IllegalArgumentException("ERROR: edge without a vertex");

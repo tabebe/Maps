@@ -27,10 +27,9 @@ public class Node extends Vertex<String> {
    * that value for that particular instance.
    * @param nodeID id
    */
-  public Node(String nodeID, ArrayList<Double> c) {
+  public Node(String nodeID) {
 	super(nodeID);
     this.myID = nodeID;
-    this.coors = c;
     this.fromWay = "";
     this.fromWayID = "";
   }
@@ -82,6 +81,11 @@ public class Node extends Vertex<String> {
    */
   public double getDistFromTarg() {
 	  return distFromTarg;
+  }
+  
+  
+  public void setCoors(ArrayList<Double> coor) {
+	  this.coors = coor;
   }
   
   /**
@@ -136,20 +140,39 @@ public class Node extends Vertex<String> {
   	return fromWayID;
   }
 
+  
+  @Override
+  public int hashCode() {
+	  final int prime = 31;
+	  int result = 1;
+	  result = prime * result + ((myID == null) ? 0 : myID.hashCode());
+	  return result;
+  }
 
 
 
   @Override
-  public boolean equals(Object o) {
-    if (o instanceof Node) {
-      //type cast
-      Node a = (Node) o;
-      return (this.getID().equals(a.getID()));
-    }
-    return false;
+  public boolean equals(Object obj) {
+    if (this == obj)
+    	return true;
+    if (obj == null)
+    	return false;
+    if (getClass() != obj.getClass()) 
+    	return false;
+    Node other = (Node) obj;
+    
+    if (myID == null) {
+    	if (other.myID != null)
+    		return false;
+    } else if (!myID.equals(other.myID))
+    	return false;
+    return true;
   }
   
-  
+  @Override
+  public String toString() {
+	  return myID;
+  }
   static  Comparator<Node> compareCoor(int axis) {
 	    return new Comparator<Node>() {
 	      @Override

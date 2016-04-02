@@ -33,6 +33,8 @@ public class KDTree<T> {
    * @param k dimensions
    * @param nodes list of nodes.
    */
+  
+  
   public KDTree(int k, List<KDNode<T>> nodes) {
     tostring = new ArrayList<String>();
     size = 0;

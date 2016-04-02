@@ -49,7 +49,7 @@ public class DbQueryTest {
   
   @Test
   public void getWayTest() throws ClassNotFoundException, SQLException {
-	  DbQuery sql = new DbQuery("/home/ta7/course/cs032/Maps/smallMaps.sqlite3");
+	  DbQuery sql = new DbQuery("/course/cs032/data/maps/smallMaps.sqlite3");
     
    
     String way = sql.getWay("/w/0");
@@ -60,15 +60,29 @@ public class DbQueryTest {
     assertTrue(way.isEmpty());
   }
   
+  
+  @Test
+  public void getIDTest() throws ClassNotFoundException, SQLException {
+	  DbQuery sql = new DbQuery("/course/cs032/data/maps/smallMaps.sqlite3");
+	 
+   
+    String node = sql.getID("41.82", "-71.4");
+    assertTrue(node.equals("/n/0"));
+    
+    
+    node = sql.getWay("Not a name");
+    assertTrue(node.isEmpty());
+  }
+  
   @Test
   public void getNodeWaysIDsTest() throws ClassNotFoundException, SQLException {
-	  DbQuery sql = new DbQuery("/home/ta7/course/cs032/Maps/smallMaps.sqlite3");
+	  DbQuery sql = new DbQuery("/course/cs032/data/maps/smallMaps.sqlite3");
 
     
-    List<String> ways = sql.getNodeWaysIDs("/n/1");
+    List<String> ways = sql.getNodeWaysIDs("/n/0");
     assertTrue(ways.contains("/w/0"));
-    assertTrue(ways.contains("/w/1"));
-    assertTrue(ways.contains("/w/3"));
+    assertTrue(ways.contains("/w/2"));
+//    assertTrue(ways.contains("/w/3"));
     
     ways = sql.getNodeWaysIDs("Not a film");
     assertTrue(ways.isEmpty());

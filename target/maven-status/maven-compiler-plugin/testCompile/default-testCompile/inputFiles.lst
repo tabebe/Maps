@@ -1,3 +1,3 @@
-/gpfs/main/home/wtruong/course/cs032/projects/autocorrect/src/test/java/edu/brown/cs/wtruong/autocorrect/RankerTest.java
-/gpfs/main/home/wtruong/course/cs032/projects/autocorrect/src/test/java/edu/brown/cs/wtruong/autocorrect/TrieTest.java
-/gpfs/main/home/wtruong/course/cs032/projects/autocorrect/src/test/java/edu/brown/cs/wtruong/autocorrect/TrieNodeTest.java
+/gpfs/main/home/ta7/course/cs032/Maps/src/test/java/edu/brown/cs/ta7/autocorrect/WayTest.java
+/gpfs/main/home/ta7/course/cs032/Maps/src/test/java/edu/brown/cs/ta7/autocorrect/EdgeTest.java
+/gpfs/main/home/ta7/course/cs032/Maps/src/test/java/edu/brown/cs/ta7/autocorrect/DbQueryTest.java
