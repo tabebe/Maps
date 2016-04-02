@@ -61,9 +61,10 @@ public class Main {
 
   /**
    * @param args the command line args
+ * @throws IOException 
    */
   public static void main(String[] args) 
-  throws ClassNotFoundException, SQLException {
+  throws ClassNotFoundException, SQLException, IOException {
 	  	new Main(args).run();
 
   }
@@ -79,18 +80,7 @@ public class Main {
   
   
   
-  private void run() throws ClassNotFoundException, SQLException {
-	  OptionParser parser = new OptionParser();
-	  
-//	  OptionSet options = parser.parse(args);
-//	  @SuppressWarnings("unchecked")
-//	  List<String> listNonOpts = (List<String>) options.nonOptionArguments();
-	  
-//	  x1 = listNonOpts.get(0);
-//	  y1 = listNonOpts.get(1);
-//	  x2 = listNonOpts.get(2);
-//	  y2 = listNonOpts.get(3);
-//	  db = listNonOpts.get(4);
+  private void run() throws ClassNotFoundException, SQLException, IOException {
 	  
 	  x1 = args[0];
 	  y1 = args[1];
@@ -98,6 +88,15 @@ public class Main {
 	  y2 = args[3];
 	  db = args[4];
 	 database = new DbQuery(db);
+	 
+	 double x11 = Double.parseDouble(x1);
+	 double y11 = Double.parseDouble(y1);
+	 double x22 = Double.parseDouble(x2);
+	 double y22 = Double.parseDouble(y2);
+	 
+	 
+	 
+	 
 	  List<String> nodeIDs;
 	  List<String> wayIDs;
 	  List<Node> nodes = new ArrayList<Node>();
@@ -134,33 +133,143 @@ public class Main {
 	  KDTree<Node> kdTree;
 	  
 	  
-	  
+	  /**
+	   * turn Nodes into KDNodes to use for nearest n. search
+	   */
 	  for (int i = 0; i < nodes.size(); i++) {
 		  Node node = nodes.get(i);
 		  KDNode<Node> kdnode = new KDNode<Node>(node, node.getCoors());
 		  knodes.add(kdnode);
 	  }
 	  
+	  /**
+	   * Create KDTree
+	   * Get coordinates 
+	   */
 	  kdTree = new KDTree(2, knodes);
-	  ArrayList<Double> coors = new ArrayList<Double>();
-	  coors.add(41.8204);
-	  coors.add(-71.4001);
-	  ArrayList<KDNode<Node>> answers = kdTree.neighborSearch(1, coors);
+	  scanInputs(kdTree, nodes, ways);
+	  database.closeConn();
 	  
-	  System.out.println(answers.get(0).getObject());
-	  
-	  
-	  
-	  Graph graph = new Graph(nodes, ways);
-	  Dijkstra dij = new Dijkstra(graph);
-	  dij.execute(nodes.get(0));
-	  LinkedList<Node> path = dij.getPath(nodes.get(1));
-	  
-	  
+
 	
   }
   
   
+  public void scanInputs(KDTree tree, List<Node> nodes, List<Way> ways) throws IOException {
+	  BufferedReader newBR = new BufferedReader(new InputStreamReader(System.in));
+	  String s;
+	  while ((s = newBR.readLine()) != null) {
+		  if (s.isEmpty()) {
+			  break;
+		  }
+		  
+		  String[] inputs = s.split(" ");
+		  parseCommands(inputs, tree, nodes, ways);
+		  
+		  
+	  }
+	  newBR.close();
+  }
+  
+  
+  public void parseCommands(String[] inputs, KDTree tree, List<Node> nodes, List<Way> ways) {
+	  StringBuilder othersb = new StringBuilder();
+	  
+	  if (inputs.length != 4) {
+		  System.out.println("ERROR: wrong number of arguments");
+		  System.exit(1);
+	  }
+	  
+	  try {
+		  double x1 = Double.parseDouble(inputs[0]);
+		  double y1 = Double.parseDouble(inputs[1]);
+		  double x2 = Double.parseDouble(inputs[2]);
+		  double y2 = Double.parseDouble(inputs[3]);
+		  
+		  
+		  
+		  ArrayList<Double> startCoors = new ArrayList<Double>();
+		  ArrayList<Double> endCoors = new ArrayList<Double>();
+		  
+		  startCoors.add(x1);
+		  startCoors.add(y1);
+		  endCoors.add(x2);
+		  endCoors.add(y2);
+		  
+		  /**
+		   * Find the nearest nodes for the start and end coordinates
+		   */
+		  ArrayList<KDNode<Node>> nearestStart = tree.neighborSearch(1, startCoors);
+		  ArrayList<KDNode<Node>> nearestEnd = tree.neighborSearch(1, endCoors);
+		  
+		  Node startNode = nearestStart.get(0).getObject();
+		  Node endNode = nearestEnd.get(0).getObject();
+		  
+		  
+		  
+		  if (startNode.getID() == endNode.getID()) {
+			  System.out.println("Start and End nodes are the same.");
+			  
+		  } else {
+		  
+		  Graph graph = new Graph(nodes, ways);
+		  Dijkstra dij = new Dijkstra(graph);
+		  dij.execute(startNode);
+		  LinkedList<Node> path = dij.getPath(endNode);
+		  List<String> wayPath = listOfWays(path);
+		  
+		  
+		  
+		  
+		  List<String> conns = dij.getConnString(path);
+		  int i = 0;
+		  for (String a : conns) {
+			  System.out.println(a + wayPath.get(i));
+			  i++;
+		  }
+		 
+		 }
+		  
+		  
+		  
+	  } catch (IllegalArgumentException e) {
+		  
+		  System.exit(1);
+	  } catch (SQLException e) {
+		  
+		  System.exit(1);
+	  } catch (ClassNotFoundException e) {
+		  
+		  System.exit(1);
+	  }
+	  
+	  
+  }
+  
+  
+  private List<String> listOfWays(LinkedList<Node> path) throws SQLException {
+	   List<String> wayList = new ArrayList<String>();
+	  for (int i = 0; i < path.size() - 1; i++) {
+		  String firstID = path.get(i).getID();
+		  String secondID = path.get(i + 1).getID();
+		  String wayID = database.getWayPath(firstID, secondID);
+		  wayList.add(wayID);
+	  }
+	  return wayList;
+	  
+  }
+  
+  
+  
+  
+  /**
+   * Takes in a node id and creates a Node data structure
+   * 
+   * @param nodeID - node id
+   * @return
+   * @throws NumberFormatException
+   * @throws SQLException
+   */
   private Node makeNode(String nodeID) throws NumberFormatException, SQLException {
 	  ArrayList<Double> coors = new ArrayList<Double>();
 	  double lat = Double.parseDouble(database.getLatN(nodeID));
@@ -173,6 +282,12 @@ public class Main {
   }
   
   
+  /**
+   * takes in two nodes and calculates the distance between them
+   * @param start
+   * @param end
+   * @return
+   */
   private Double calcWeight(Node start, Node end) {
 	  ArrayList<Double> first = start.getCoors();
 	  ArrayList<Double> second = end.getCoors();

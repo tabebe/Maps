@@ -21,6 +21,8 @@ public class Dijkstra {
 	private Set<Node> unSettledNodes;
 	private Map<Node, Node> pred;
 	private Map<Node, Double> distance;
+	private String startID;
+	private String endID;
 	
 	
 	
@@ -33,6 +35,8 @@ public class Dijkstra {
 	
 	
 	public void execute(Node start) {
+		this.startID = start.getID();
+		
 		settledNodes = new HashSet<Node>();
 		unSettledNodes = new HashSet<Node>();
 		distance = new HashMap<Node, Double>();
@@ -116,6 +120,7 @@ public class Dijkstra {
 	
 	
 	public LinkedList<Node> getPath(Node target) {
+		this.endID = target.getID();
 		
 		LinkedList<Node> path = new LinkedList<Node>();
 		Node step = target;
@@ -134,6 +139,26 @@ public class Dijkstra {
 		return path;
 	}
 	
+	
+	
+	public List<String> getConnString(LinkedList<Node> path) {
+		List<String> connections = new ArrayList<String>();
+		if (path.isEmpty()) {
+			connections.add(startID + "-/-" + endID);
+			return connections;
+		}
+		
+		for (int i = 0; i < path.size() - 1; i++) {
+			Node a1 = path.get(i);
+			Node a2 = path.get(i + 1);
+			String name1 = a1.getID();
+			String name2 = a2.getID();
+			String way = a2.getWay();
+			connections.add(name1 + " => " + name2 + " : " + way);
+		}
+		return connections;
+		
+	}
 	
 	
 	

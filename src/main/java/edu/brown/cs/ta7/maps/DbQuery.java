@@ -76,6 +76,37 @@ public class DbQuery {
   
   
   
+  
+  public String getWayPath(String firstNode, String secondNode) throws SQLException {
+	  String query = "SELECT id FROM way WHERE (start = ? AND end = ?) "
+	  		+ "OR (start = ? AND end = ?)";
+	    PreparedStatement stat = conn.prepareStatement(query);
+	    stat.setString(1, firstNode);
+	    stat.setString(2, secondNode);
+	    stat.setString(3, secondNode);
+	    stat.setString(4, firstNode);
+	    ResultSet results = stat.executeQuery();
+	    //only add if results isn't empty
+	    String toReturn = "";
+	    if (results.next()) {
+	      toReturn = results.getString(1);
+	    }
+	    stat.close();
+	    results.close();
+	    return toReturn;
+  }
+  
+  
+  
+  
+  /**
+   * Given lat and long of an node, this function gets the 
+   * id of the node
+   * @param lat - lat of node
+   * @param lon - long of node 
+   * @return - ID of the node which cooresponds to lat and long
+   * @throws SQLException
+   */
   public String getID(String lat, String lon) throws SQLException {
 	  String query = "SELECT id FROM node WHERE longitude = ? AND latitude = ?";
 	    PreparedStatement stat = conn.prepareStatement(query);
@@ -93,6 +124,14 @@ public class DbQuery {
   }
 
 
+  
+  
+  /**
+   * Given an id of a way, this function returns it's start node
+   * @param id - id of way
+   * @return - id of start node
+   * @throws SQLException
+   */
   public String getStartN(String id) throws SQLException { 
 	  String query = "SELECT start FROM way WHERE id = ?";
 	    PreparedStatement stat = conn.prepareStatement(query);
@@ -108,6 +147,13 @@ public class DbQuery {
 	    return toReturn;
   }
   
+  
+  /**
+   * Given an id of a way, this function returns it's end node
+   * @param id - id of way
+   * @return - id of end node
+   * @throws SQLException
+   */
   public String getEndN(String id) throws SQLException { 
 	  String query = "SELECT end FROM way WHERE id = ?";
 	    PreparedStatement stat = conn.prepareStatement(query);
@@ -123,6 +169,13 @@ public class DbQuery {
 	    return toReturn;
   }
   
+  
+  /**
+   * Given an id of a node, it returns the long of that node
+   * @param id - id of node 
+   * @return - long of node (string)
+   * @throws SQLException
+   */
   public String getLongN(String id) throws SQLException { 
 	  String query = "SELECT longitude FROM node WHERE id = ?";
 	    PreparedStatement stat = conn.prepareStatement(query);
@@ -138,6 +191,13 @@ public class DbQuery {
 	    return toReturn;
   }
   
+  
+  /**
+   * Given if of node, it returns the lat of that node
+   * @param id - id of node
+   * @return - lat of node (string) 
+   * @throws SQLException
+   */
   public String getLatN(String id) throws SQLException {
 	  String query = "SELECT latitude FROM node WHERE id = ?";
 	    PreparedStatement stat = conn.prepareStatement(query);
