@@ -73,6 +73,21 @@ public class DbQuery {
 //    return toReturn;
 //  }
   
+  public List<String> getProperWays() throws SQLException {
+	    String query = "SELECT id FROM way WHERE type != ?";
+	    PreparedStatement stat = conn.prepareStatement(query);
+	    stat.setString(1, "");
+	    ResultSet results = stat.executeQuery();
+	    List<String> toReturn = new ArrayList<String>();
+	    while (results.next()) {
+	      toReturn.add(results.getString(1));
+	    }
+	    stat.close();
+	    results.close();
+	    return toReturn;
+	  }
+  
+ 
   
   
   

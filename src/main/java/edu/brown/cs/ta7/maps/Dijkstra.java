@@ -63,10 +63,10 @@ public class Dijkstra {
 						+ getDistance(node, target));
 				pred.put(target, node);
 				unSettledNodes.add(target);
-			}
-			
+			}	
 		}
 	}
+	
 	
 	private double getDistance(Node node, Node target) {
 		for (Way way : ways) {

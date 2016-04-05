@@ -10,9 +10,11 @@ import java.nio.charset.Charset;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.regex.Pattern;
 
 import org.hamcrest.Matcher;
@@ -43,19 +45,12 @@ import freemarker.template.Configuration;
  *
  */
 public class Main {
-  private File file;
-  private static DbQuery sparkDb;
- // private static Graph sparkGraph;
- // private static Dijkstra dijkstra;
-  private String x1;
-  private String y1;
-  private String x2;
-  private String y2;
+
   private String db;
   private List<String> strings;
   private Integer portNum;
   private String[] args;
-  private static final Charset UTF8 = Charsets.UTF_8;
+  //private static final Charset UTF8 = Charsets.UTF_8;
   private DbQuery database;
   private final static Gson GSON = new Gson();
   private KDTree<Node> kdTree;
@@ -82,46 +77,58 @@ public class Main {
   
   
   private void run() throws ClassNotFoundException, SQLException, IOException {
+	 
+	 // make sure the number of run arguments are correct
+	 // (The number of legal arguments will change when we add --GUI"
+	 if (args.length != 1) {
+		 System.out.println("Error: wrong number of arguments");
+		 System.exit(1);
+	 }
 	  
-	  x1 = args[0];
-	  y1 = args[1];
-	  x2 = args[2];
-	  y2 = args[3];
-	  db = args[4];
+	 // initialize database
+	 db = args[0];
 	 database = new DbQuery(db);
 	 
-	 double x11 = Double.parseDouble(x1);
-	 double y11 = Double.parseDouble(y1);
-	 double x22 = Double.parseDouble(x2);
-	 double y22 = Double.parseDouble(y2);
 	 
-	 
-	 
-	 
-	  List<String> nodeIDs;
-	  List<String> wayIDs;
+	  // Data structures to get and store Nodes and Ways
+	  Map<Node, Node> nodeMap = new HashMap();
 	  List<Node> nodes = new ArrayList<Node>();
+	  List<String> wayIDs;
 	  List<Way> ways = new ArrayList<Way>();
 	  
-	  nodeIDs = database.getAllNodes();
-	  for (int i = 0; i < nodeIDs.size(); i++) { 
-		  nodes.add(makeNode(nodeIDs.get(i)));
+	  // query ways that include nodes that have types 
+	  wayIDs = database.getProperWays();
+	  
+	  
+	  
+	  // get the nodes that are connected to the proper ways, 
+	  // and store them in a hash map
+	  for (int i = 0; i < wayIDs.size(); i++) {
+		  String start = database.getStartN(wayIDs.get(i));
+		  String end = database.getEndN(wayIDs.get(i));
+		  nodeMap.put(makeNode(start), makeNode(start));
+		  nodeMap.put(makeNode(end), makeNode(end));
 	  }
 	  
+	  // Go the nodes from the hash map and put them in a list
+	  Set<Node> newNodes = nodeMap.keySet();
+	  Iterator<Node> nodeIter = newNodes.iterator();
+	  while (nodeIter.hasNext()) {
+		  nodes.add(nodeIter.next());
+	  }
 	  
-	  wayIDs = database.getAllWays();
+
+	  
+	  //Creates array of Ways. it also calculates the weighs of nodes
 	  for (int i = 0; i < wayIDs.size(); i++) {
 		  String id = wayIDs.get(i);
 		  String start = database.getStartN(id);
 		  String end = database.getEndN(id);
 		  
-		  
-		  
 		  Node startN = makeNode(start);
 		  Node endN = makeNode(end);
 		  String name = database.getWay(id);
 		  double weight = calcWeight(startN, endN);
-		  
 		  
 		  Way way = new Way(startN, endN, name, id, weight);
 		  ways.add(way);
@@ -207,25 +214,20 @@ public class Main {
 		  
 		  String way1Start = database.getStartN(way1);
 		  String way1End = database.getEndN(way1);
-//		  System.out.println(way1Start);
-//		  System.out.println(way1End);
+
 		  String crossWay1Start = database.getStartN(crossWay1);
 		  String crossWay1End = database.getEndN(crossWay1);
-//		  System.out.println(crossWay1Start);
-//		  System.out.println(crossWay1End);
+
 		  String way2Start = database.getStartN(way2);
 		  String way2End = database.getEndN(way2);
-//		  System.out.println(way2Start);
-//		  System.out.println(way2End);
+
 		  String crossWay2Start = database.getStartN(crossWay2);
 		  String crossWay2End = database.getEndN(crossWay2);
-//		  System.out.println(crossWay2Start);
-//		  System.out.println(crossWay2End);
+
 		  
 		  boolean pass = false;
 		  boolean extrapass = false;
 		  
-//		  System.out.println(way1Start.equals(crossWay1Start));
 		  
 		  if (way1Start.equals(crossWay1Start) || way1Start.equals(crossWay1End)) {
 			  startCoors = makeNode(way1Start).getCoors();
@@ -278,9 +280,7 @@ public class Main {
 		  LinkedList<Node> path = dij.getPath(endNode);
 		  List<String> wayPath = listOfWays(path);
 		  
-		  
-		  
-		  
+
 		  List<String> conns = dij.getConnString(path);
 		  int i = 0;
 		  for (String a : conns) {
@@ -290,23 +290,27 @@ public class Main {
 		 
 		 }
 		  
-		  
-		  
+  
 	  } catch (IllegalArgumentException e) {
-		  System.out.println("Illegal Arguements");
+		  System.out.println("Error: Illegal Arguements");
 		  System.exit(1);
 	  } catch (SQLException e) {
-		  
+		  System.out.println("Error: SQL Exception");
 		  System.exit(1);
 	  } catch (ClassNotFoundException e) {
-		  
+		  System.out.println("Error: Class Not Found Exception");
 		  System.exit(1);
 	  }
 	  
 	  
   }
   
-  
+  /**
+   * Given a path, this function finds the ways that the path takes
+   * @param path - list of path
+   * @return - list of way IDs
+   * @throws SQLException
+   */
   private List<String> listOfWays(LinkedList<Node> path) throws SQLException {
 	   List<String> wayList = new ArrayList<String>();
 	  for (int i = 0; i < path.size() - 1; i++) {
