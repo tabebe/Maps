@@ -32,46 +32,57 @@ public class DbQuery {
 
 
 
-//
-//  public List<Road> queryWays(Double latTL, Double longTL, Double latBR, Double longBR) throws SQLException {
-//
-//    String query = "SELECT n1.latitude AS lat1, n1.longitude AS long1, way.name AS name, n2.latitude AS lat2, n2.longitude AS long2 "
-//        + "FROM node n1 "
-//        + "INNER JOIN way ON n1.id=way.start AND n1.latitude<=? AND n1.latitude>=? AND n1.longitude<=? AND n1.longitude>=? "
-//        + "INNER JOIN node n2 ON n2.id=way.end AND n2.latitude<=? AND n2.latitude>=? AND n2.longitude<=? AND n2.longitude>=?";
-//
-//    //TODO(2): Create a PreparedStatement
-//    PreparedStatement prep = conn.prepareStatement(query);
-//    prep.setDouble(1, latTL);
-//    prep.setDouble(2, latBR);
-//    prep.setDouble(3, longTL);
-//    prep.setDouble(4, longBR);
-//    prep.setDouble(5, latTL);
-//    prep.setDouble(6, latBR);
-//    prep.setDouble(7, longTL);
-//    prep.setDouble(8, longBR);
-//
-//
-//    //TODO(3): Execute the query and retrieve a ResultStatement
-//    ResultSet rs = prep.executeQuery();
-//
-//    //TODO(4): Add the results to this list
-//    List<Road> toReturn = new ArrayList<Road>();
-//    while (rs.next()) {
-//      Double lat1 = rs.getDouble("lat1");
-//      Double long1 = rs.getDouble("long1");
-//      Double lat2 = rs.getDouble("lat2");
-//      Double long2 = rs.getDouble("long2");
-//      String name = rs.getString("name");
-//
-//      Road road = new Road(name, lat1, long1, lat2, long2);
-//          toReturn.add(road);
-//        }
-//    //TODO(5): Close the ResultSet and the PreparedStatement
-//    rs.close();
-//    prep.close();
-//    return toReturn;
-//  }
+
+  public List<Node> queryTile(Double latTL, Double longTL, Double latBR, Double longBR) throws SQLException {
+
+    String query = "SELECT n1.latitude AS lat1, n1.longitude AS long1, way.name AS name, n2.latitude AS lat2, n2.longitude AS long2 "
+        + "FROM node n1 "
+        + "INNER JOIN way ON n1.id=way.start AND n1.latitude<=? AND n1.latitude>=? AND n1.longitude<=? AND n1.longitude>=? "
+        + "INNER JOIN node n2 ON n2.id=way.end AND n2.latitude<=? AND n2.latitude>=? AND n2.longitude<=? AND n2.longitude>=?";
+
+    //TODO(2): Create a PreparedStatement
+    PreparedStatement prep = conn.prepareStatement(query);
+    prep.setDouble(1, latTL);
+    prep.setDouble(2, latBR);
+    prep.setDouble(3, longTL);
+    prep.setDouble(4, longBR);
+    prep.setDouble(5, latTL);
+    prep.setDouble(6, latBR);
+    prep.setDouble(7, longTL);
+    prep.setDouble(8, longBR);
+
+
+    //TODO(3): Execute the query and retrieve a ResultStatement
+    ResultSet rs = prep.executeQuery();
+
+    //TODO(4): Add the results to this list
+    List<Node> toReturn = new ArrayList<Node>();
+    while (rs.next()) {
+      Double lat1 = rs.getDouble("lat1");
+      Double long1 = rs.getDouble("long1");
+      Double lat2 = rs.getDouble("lat2");
+      Double long2 = rs.getDouble("long2");
+      String name = rs.getString("name");
+      ArrayList<Double> coors1 = new ArrayList<Double>();
+      ArrayList<Double> coors2 = new ArrayList<Double>();
+      coors1.add(lat1);
+      coors1.add(long1);
+      coors2.add(lat2);
+      coors2.add(long2);
+      Node node1 = new Node("id");
+      node1.setCoors(coors1);
+      Node node2 = new Node("id");
+      node2.setCoors(coors2);
+      
+      toReturn.add(node1);
+      toReturn.add(node2);
+      
+        }
+    //TODO(5): Close the ResultSet and the PreparedStatement
+    rs.close();
+    prep.close();
+    return toReturn;
+  }
   
   public List<String> getProperWays() throws SQLException {
 	    String query = "SELECT id FROM way WHERE type != ?";
@@ -248,6 +259,7 @@ public class DbQuery {
     return toReturn;
   }
   
+  
   /**
    * query that selects all distinct nodes
    * from the database.
@@ -317,7 +329,49 @@ public class DbQuery {
     return toReturn;
   }
 
+  
+  /**
+   * Takes in a node id and creates a Node data structure
+   * 
+   * @param nodeID - node id
+   * @return
+   * @throws NumberFormatException
+   * @throws SQLException
+   */
+  public Node makeNode(String nodeID) throws NumberFormatException, SQLException {
+	  ArrayList<Double> coors = new ArrayList<Double>();
+	  double lat = Double.parseDouble(this.getLatN(nodeID));
+	  double lon = Double.parseDouble(this.getLongN(nodeID));
+	  coors.add(lat);
+	  coors.add(lon);
+	  Node node = new Node(nodeID);
+	  node.setCoors(coors);
+	  return node;
+  }
+  
 
+  /**
+   * takes in two nodes and calculates the distance between them
+   * @param start
+   * @param end
+   * @return
+   */
+  public Double calcWeight(Node start, Node end) {
+	  ArrayList<Double> first = start.getCoors();
+	  ArrayList<Double> second = end.getCoors();
+	  double x1 = first.get(0);
+	  double y1 = first.get(1);
+	  double x2 = second.get(0);
+	  double y2 = second.get(1);
+	  
+	  double one = x2 - x1;
+	  double two = y2 - y1;
+	  
+	  double sqr = (one * one);
+	  double sqr2 = (two * two);
+	  return Math.sqrt(sqr + sqr2);
+  }
+  
   
   public void closeConn() throws SQLException {
 	    conn.close();

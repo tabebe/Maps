@@ -36,12 +36,12 @@ public class DbQueryTest {
     // (Optional) Code to run after each test case goes here.
   }
   
-  @Test
-  public void getAllNodesTest() throws ClassNotFoundException, SQLException {
-	DbQuery sql = new DbQuery("/home/ta7/course/cs032/Maps/smallMaps.sqlite3");
-    List<String> nodes = sql.getAllNodes();
-    assertTrue(nodes.size() == 6);
-  }
+//  @Test
+//  public void getAllNodesTest() throws ClassNotFoundException, SQLException {
+//	DbQuery sql = new DbQuery("/home/ta7/course/cs032/Maps/smallMaps.sqlite3");
+//    List<String> nodes = sql.getAllNodes();
+//    assertTrue(nodes.size() == 6);
+//  }
   
 
   

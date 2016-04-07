@@ -50,7 +50,6 @@ public class Main {
   private List<String> strings;
   private Integer portNum;
   private String[] args;
-  //private static final Charset UTF8 = Charsets.UTF_8;
   private DbQuery database;
   private final static Gson GSON = new Gson();
   private KDTree<Node> kdTree;
@@ -88,6 +87,7 @@ public class Main {
 	 // initialize database
 	 db = args[0];
 	 database = new DbQuery(db);
+	
 	 
 	 
 	  // Data structures to get and store Nodes and Ways
@@ -106,8 +106,8 @@ public class Main {
 	  for (int i = 0; i < wayIDs.size(); i++) {
 		  String start = database.getStartN(wayIDs.get(i));
 		  String end = database.getEndN(wayIDs.get(i));
-		  nodeMap.put(makeNode(start), makeNode(start));
-		  nodeMap.put(makeNode(end), makeNode(end));
+		  nodeMap.put(database.makeNode(start), database.makeNode(start));
+		  nodeMap.put(database.makeNode(end), database.makeNode(end));
 	  }
 	  
 	  // Go the nodes from the hash map and put them in a list
@@ -125,10 +125,10 @@ public class Main {
 		  String start = database.getStartN(id);
 		  String end = database.getEndN(id);
 		  
-		  Node startN = makeNode(start);
-		  Node endN = makeNode(end);
+		  Node startN = database.makeNode(start);
+		  Node endN = database.makeNode(end);
 		  String name = database.getWay(id);
-		  double weight = calcWeight(startN, endN);
+		  double weight = database.calcWeight(startN, endN);
 		  
 		  Way way = new Way(startN, endN, name, id, weight);
 		  ways.add(way);
@@ -185,6 +185,10 @@ public class Main {
 	  StringBuilder othersb = new StringBuilder();
 	  
 	  if (inputs.length != 4) {
+		  
+		  if (inputs[0] == "exit") {
+			  System.exit(1);
+		  }
 		  System.out.println("ERROR: wrong number of arguments");
 		  scanInputs(kdTree, nodes, ways);
 	  }
@@ -209,8 +213,6 @@ public class Main {
 		  String way2 = inputs[2];
 		  String crossWay2 = inputs[3];
 		  
-		  Node firstStart;
-		  Node targetEnd;
 		  
 		  String way1Start = database.getStartN(way1);
 		  String way1End = database.getEndN(way1);
@@ -230,18 +232,18 @@ public class Main {
 		  
 		  
 		  if (way1Start.equals(crossWay1Start) || way1Start.equals(crossWay1End)) {
-			  startCoors = makeNode(way1Start).getCoors();
+			  startCoors = database.makeNode(way1Start).getCoors();
 			  pass = true;
 		  } else if (way1End.equals(crossWay1Start) || way1End.equals(crossWay1End)) {
-			  startCoors = makeNode(way1End).getCoors();
+			  startCoors = database.makeNode(way1End).getCoors();
 			  pass = true;
 		  } 
 		  
 		  if (way2Start.equals(crossWay2Start) || way2Start.equals(crossWay2End)) {
-			  endCoors = makeNode(way2Start).getCoors();
+			  endCoors = database.makeNode(way2Start).getCoors();
 			  extrapass = true;
 		  } else if (way2End.equals(crossWay2Start) || way2End.equals(crossWay2End)) {
-			  endCoors = makeNode(way2End).getCoors();
+			  endCoors = database.makeNode(way2End).getCoors();
 			  extrapass = true;
 		  } 
 		  
@@ -324,49 +326,49 @@ public class Main {
   }
   
   
-  
-  
-  /**
-   * Takes in a node id and creates a Node data structure
-   * 
-   * @param nodeID - node id
-   * @return
-   * @throws NumberFormatException
-   * @throws SQLException
-   */
-  private Node makeNode(String nodeID) throws NumberFormatException, SQLException {
-	  ArrayList<Double> coors = new ArrayList<Double>();
-	  double lat = Double.parseDouble(database.getLatN(nodeID));
-	  double lon = Double.parseDouble(database.getLongN(nodeID));
-	  coors.add(lat);
-	  coors.add(lon);
-	  Node node = new Node(nodeID);
-	  node.setCoors(coors);
-	  return node;
-  }
-  
-  
-  /**
-   * takes in two nodes and calculates the distance between them
-   * @param start
-   * @param end
-   * @return
-   */
-  private Double calcWeight(Node start, Node end) {
-	  ArrayList<Double> first = start.getCoors();
-	  ArrayList<Double> second = end.getCoors();
-	  double x1 = first.get(0);
-	  double y1 = first.get(1);
-	  double x2 = second.get(0);
-	  double y2 = second.get(1);
-	  
-	  double one = x2 - x1;
-	  double two = y2 - y1;
-	  
-	  double sqr = (one * one);
-	  double sqr2 = (two * two);
-	  return Math.sqrt(sqr + sqr2);
-  }
+//  
+//  
+//  /**
+//   * Takes in a node id and creates a Node data structure
+//   * 
+//   * @param nodeID - node id
+//   * @return
+//   * @throws NumberFormatException
+//   * @throws SQLException
+//   */
+//  private Node makeNode(String nodeID) throws NumberFormatException, SQLException {
+//	  ArrayList<Double> coors = new ArrayList<Double>();
+//	  double lat = Double.parseDouble(database.getLatN(nodeID));
+//	  double lon = Double.parseDouble(database.getLongN(nodeID));
+//	  coors.add(lat);
+//	  coors.add(lon);
+//	  Node node = new Node(nodeID);
+//	  node.setCoors(coors);
+//	  return node;
+//  }
+//  
+//  
+//  /**
+//   * takes in two nodes and calculates the distance between them
+//   * @param start
+//   * @param end
+//   * @return
+//   */
+//  private Double calcWeight(Node start, Node end) {
+//	  ArrayList<Double> first = start.getCoors();
+//	  ArrayList<Double> second = end.getCoors();
+//	  double x1 = first.get(0);
+//	  double y1 = first.get(1);
+//	  double x2 = second.get(0);
+//	  double y2 = second.get(1);
+//	  
+//	  double one = x2 - x1;
+//	  double two = y2 - y1;
+//	  
+//	  double sqr = (one * one);
+//	  double sqr2 = (two * two);
+//	  return Math.sqrt(sqr + sqr2);
+//  }
   
   
   

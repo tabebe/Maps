@@ -60,6 +60,8 @@ public class Trie {
     }
   }
 
+  
+  
   private void addWord(String word) {
     TrieNode currNode = root;
     for (char c: word.toCharArray()) {
@@ -72,6 +74,8 @@ public class Trie {
     currNode.setWordTrue();
   }
 
+  
+  
   private int levDistance(String word1, String word2) {
     int[][] levMat = new int[word1.length() + 1][word2.length() + 1];
     for (int i = 0; i < word1.length() + 1; i++) {

@@ -1,4 +1,4 @@
-package edu.brown.cs.rwdodd.auto;
+package edu.brown.cs.ta7.autocorrect;
 
 import java.io.File;
 import java.io.IOException;
@@ -111,6 +111,11 @@ public final class Main {
     }
   }
 
+  
+  
+  
+  
+  
   private static FreeMarkerEngine createEngine() {
     Configuration config = new Configuration();
     File templates
@@ -125,6 +130,9 @@ public final class Main {
     return new FreeMarkerEngine(config);
   }
 
+  
+  
+  
   private void runSparkServer() {
     Spark.externalStaticFileLocation("src/main/resources/static");
     Spark.exception(Exception.class, new ExceptionPrinter());
@@ -139,14 +147,18 @@ public final class Main {
     Spark.post("/suggest", new SuggestHandler());
   }
 
+  
+  
   /**
    * @author rwdodd
    *
    */
+  
   private class FrontHandler implements TemplateViewRoute {
     /* (non-Javadoc)
      * @see spark.TemplateViewRoute#handle(spark.Request, spark.Response)
      */
+	  
     @Override
     public ModelAndView handle(Request req, Response res) {
       ArrayList<String> results = new ArrayList<String>();
@@ -157,6 +169,8 @@ public final class Main {
     }
   }
 
+  
+  
   /**
    * @author rwdodd
    *
@@ -247,6 +261,7 @@ public final class Main {
       return GSON.toJson(variables);
     }
   }
+  
   /**
    * @author rwdodd
    *
