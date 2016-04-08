@@ -33,7 +33,7 @@ public class DbQuery {
 
 
 
-  public List<Node> queryTile(Double latTL, Double longTL, Double latBR, Double longBR) throws SQLException {
+  public String queryTile(Double latTL, Double longTL, Double latBR, Double longBR) throws SQLException {
 
     String query = "SELECT n1.latitude AS lat1, n1.longitude AS long1, way.name AS name, n2.latitude AS lat2, n2.longitude AS long2 "
         + "FROM node n1 "
@@ -56,32 +56,39 @@ public class DbQuery {
     ResultSet rs = prep.executeQuery();
 
     //TODO(4): Add the results to this list
-    List<Node> toReturn = new ArrayList<Node>();
+    StringBuilder toReturn = new StringBuilder();
     while (rs.next()) {
-      Double lat1 = rs.getDouble("lat1");
-      Double long1 = rs.getDouble("long1");
-      Double lat2 = rs.getDouble("lat2");
-      Double long2 = rs.getDouble("long2");
+      String lat1 = rs.getString("lat1");
+      String long1 = rs.getString("long1");
+      String lat2 = rs.getString("lat2");
+      String long2 = rs.getString("long2");
       String name = rs.getString("name");
-      ArrayList<Double> coors1 = new ArrayList<Double>();
-      ArrayList<Double> coors2 = new ArrayList<Double>();
-      coors1.add(lat1);
-      coors1.add(long1);
-      coors2.add(lat2);
-      coors2.add(long2);
-      Node node1 = new Node("id");
-      node1.setCoors(coors1);
-      Node node2 = new Node("id");
-      node2.setCoors(coors2);
+      toReturn.append(name+", ");
+      toReturn.append(lat1+", ");
+      toReturn.append(long1+", ");
+      toReturn.append(lat2+", ");
+      toReturn.append(long2+"/");
       
-      toReturn.add(node1);
-      toReturn.add(node2);
+      
+//      ArrayList<Double> coors1 = new ArrayList<Double>();
+//      ArrayList<Double> coors2 = new ArrayList<Double>();
+//      coors1.add(lat1);
+//      coors1.add(long1);
+//      coors2.add(lat2);
+//      coors2.add(long2);
+//      Node node1 = new Node("id");
+//      node1.setCoors(coors1);
+//      Node node2 = new Node("id");
+//      node2.setCoors(coors2);
+//      
+//      toReturn.add(node1);
+//      toReturn.add(node2);
       
         }
     //TODO(5): Close the ResultSet and the PreparedStatement
     rs.close();
     prep.close();
-    return toReturn;
+    return toReturn.toString();
   }
   
   public List<String> getProperWays() throws SQLException {
