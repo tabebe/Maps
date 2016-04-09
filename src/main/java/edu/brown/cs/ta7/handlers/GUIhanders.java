@@ -1,4 +1,4 @@
-package gui;
+package edu.brown.cs.ta7.handlers;
 
 
 import java.sql.SQLException;

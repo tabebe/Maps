@@ -36,6 +36,7 @@ import com.google.common.base.Charsets;
 import com.google.common.collect.ImmutableMap;
 import com.google.gson.Gson;
 
+import edu.brown.cs.ta7.handlers.GUIhanders;
 import edu.brown.cs.ta7.nearest.KDNode;
 import edu.brown.cs.ta7.nearest.KDTree;
 import freemarker.template.Configuration;
@@ -89,6 +90,11 @@ public class Main {
 	 database = new DbQuery(db);
 	
 	 
+	 Spark.post("/shortestpath", new GUIhanders.ShortestPath(database));
+	 Spark.post("/tileinfo", new GUIhanders.TileInfo(database));
+	 Spark.post("/pathByName", new GUIhanders.PathByName(database));
+
+
 	 
 	  // Data structures to get and store Nodes and Ways
 	  Map<Node, Node> nodeMap = new HashMap();
