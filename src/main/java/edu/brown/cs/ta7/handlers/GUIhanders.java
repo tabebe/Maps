@@ -47,7 +47,7 @@ public class GUIhanders {
 			QueryParamsMap qm = req.queryMap();
 			String input = qm.value("tiles");
 			String[] tiles = input.split(",");
-			int size = Double.parseDouble(tiles[0]);
+			double size = Double.parseDouble(tiles[0]);
 			try {
 				List<String> toReturn = new ArrayList<String>();
 				//StringBuilder nodes = new StringBuilder();
@@ -55,7 +55,7 @@ public class GUIhanders {
 					double lat1 = Double.parseDouble(tiles[i]);
 					double long1 = Double.parseDouble(tiles[i+1]);
 					double lat2 = lat1 + size;
-					double long2 = long2 - size;
+					double long2 = long1 - size;
 					
 					String nodes = database.queryTile(lat1, long1, lat2, long2);
 					toReturn.add(nodes);
